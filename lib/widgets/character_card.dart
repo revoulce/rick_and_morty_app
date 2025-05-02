@@ -16,9 +16,7 @@ class CharacterCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Theme
-            .of(context)
-            .cardColor,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [BoxShadow(blurRadius: 4, color: Colors.black12)],
       ),
@@ -39,50 +37,47 @@ class CharacterCard extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: 0,
-                right: 0,
-                child: IconButton(
-                  icon: Icon(
-                    isFavorite ? Icons.star : Icons.star_border,
-                    color: isFavorite ? Colors.amber : Colors.white,
-                    size: 24,
-                    shadows: const [
-                      Shadow(color: Colors.black, blurRadius: 4)
-                    ],
+                top: 8,
+                right: 8,
+                child: GestureDetector(
+                  onTap: () => provider.toggleFavorite(character),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    transitionBuilder: (child, animation) {
+                      return ScaleTransition(scale: animation, child: child);
+                    },
+                    child: Icon(
+                      isFavorite ? Icons.star : Icons.star_border,
+                      key: ValueKey(isFavorite), // ключ обязателен
+                      color: isFavorite ? Colors.amber : Colors.white,
+                      size: 24,
+                      shadows: const [
+                        Shadow(color: Colors.black, blurRadius: 4),
+                      ],
+                    ),
                   ),
-                  onPressed: () => provider.toggleFavorite(character),
                 ),
               ),
             ],
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 8,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     character.name,
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .titleMedium,
+                    style: Theme.of(context).textTheme.titleMedium,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '${character.species} - ${character.status}',
-                    style: Theme
-                        .of(
+                    style: Theme.of(
                       context,
-                    )
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: Colors.grey),
+                    ).textTheme.bodySmall?.copyWith(color: Colors.grey),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
