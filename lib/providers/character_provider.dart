@@ -21,9 +21,6 @@ class CharacterProvider with ChangeNotifier {
 
   Set<String> get favorites => _favoritesBox.values.toSet();
 
-  List<Character> get favoriteCharacters =>
-      _characters.where((c) => isFavorite(c.id)).toList();
-
   bool get hasMore => _hasMore;
 
   bool get isLoading => _isLoading;
@@ -51,6 +48,30 @@ class CharacterProvider with ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<List<Character>> loadFavoriteCharacters() async {
+    final ids = _favoritesBox.keys.cast<String>().toList();
+
+    List<Character> favorites = [];
+
+    for (final id in ids) {
+      final existing = _characters.firstWhere(
+        (element) => element.id == id,
+        orElse: () => Character(id: '', name: '', status: '', species: '', gender: '', image: ''),
+      );
+
+      if (existing.id.isNotEmpty) {
+        favorites.add(existing);
+      } else {
+        final fetched = await graphQLService.fetchCharacterById(id);
+        if (fetched != null) {
+          favorites.add(fetched);
+        }
+      }
+    }
+
+    return favorites;
   }
 
   void toggleFavorite(Character character) {

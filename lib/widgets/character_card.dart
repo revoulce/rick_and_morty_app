@@ -14,63 +14,83 @@ class CharacterCard extends StatelessWidget {
     final provider = Provider.of<CharacterProvider>(context);
     final isFavorite = provider.isFavorite(character.id);
 
-    return GestureDetector(
-      onTap: () => provider.toggleFavorite(character),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(blurRadius: 4, color: Colors.black12)],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(16),
-              ),
-              child: Image.network(
-                character.image,
-                height: 140,
-                fit: BoxFit.cover,
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 8,
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme
+            .of(context)
+            .cardColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [BoxShadow(blurRadius: 4, color: Colors.black12)],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(16),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      character.name,
-                      style: Theme.of(context).textTheme.titleMedium,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4,),
-                    Text(
-                      '${character.species} - ${character.status}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const Spacer(),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Icon(
-                        isFavorite ? Icons.star : Icons.star_border,
-                        color: isFavorite ? Colors.amber : Colors.grey,
-                      ),
-                    ),
-                  ],
+                child: Image.network(
+                  character.image,
+                  height: 140,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
                 ),
               ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.star : Icons.star_border,
+                    color: isFavorite ? Colors.amber : Colors.white,
+                    size: 24,
+                    shadows: const [
+                      Shadow(color: Colors.black, blurRadius: 4)
+                    ],
+                  ),
+                  onPressed: () => provider.toggleFavorite(character),
+                ),
+              ),
+            ],
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 8,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    character.name,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .titleMedium,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${character.species} - ${character.status}',
+                    style: Theme
+                        .of(
+                      context,
+                    )
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: Colors.grey),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

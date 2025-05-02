@@ -10,28 +10,39 @@ class FavoritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<CharacterProvider>(context);
-    final favorites = provider.favoriteCharacters;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Избранное')),
-      body:
-          favorites.isEmpty
-              ? const Center(child: Text('Нет избранных персонажей'))
-              : Padding(
-                padding: const EdgeInsets.all(6),
-                child: GridView.builder(
-                  itemCount: favorites.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 0.75,
-                  ),
-                  itemBuilder: (context, index) {
-                    return CharacterCard(character: favorites[index]);
-                  },
-                ),
+      body: FutureBuilder(
+        future: provider.loadFavoriteCharacters(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final favorites = snapshot.data ?? [];
+
+          if (favorites.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(6),
+            child: GridView.builder(
+              itemCount: favorites.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                childAspectRatio: 0.75,
               ),
+              itemBuilder: (context, index) {
+                return CharacterCard(character: favorites[index]);
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }

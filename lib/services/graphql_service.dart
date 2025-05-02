@@ -15,37 +15,6 @@ class GraphQLService {
     );
   }
 
-  Future<List<Character>> fetchCharacters() async {
-    final String readCharacters = '''
-    query {
-      characters {
-        results {
-          id
-          name
-          status
-          species
-          gender
-          image
-        }
-      }
-    }
-    ''';
-
-    final result = await client.value.query(
-      QueryOptions(document: gql(readCharacters)),
-    );
-
-    if (result.hasException) {
-      if (kDebugMode) {
-        print('Error: ${result.exception.toString()}');
-      }
-      return [];
-    }
-
-    final data = result.data?['characters']['results'] as List<dynamic>;
-    return data.map((json) => Character.fromJson(json)).toList();
-  }
-
   Future<Map<String, dynamic>> fetchCharactersPage(int page) async {
     final String query = r'''
       query($page: Int!) {
@@ -81,6 +50,40 @@ class GraphQLService {
       'characters': data.map((e) => Character.fromJson(e)).toList(),
       'nextPage': result.data?['characters']['info']['next'],
     };
+  }
+
+  Future<Character?> fetchCharacterById(String id) async {
+    const String query = r'''
+      query($id: ID!) {
+        character(id: $id) {
+          id
+          name
+          status
+          species
+          gender
+          image
+        }
+      }
+    ''';
+
+    final result = await client.value.query(
+      QueryOptions(document: gql(query), variables: {'id': id}),
+    );
+
+    if (result.hasException) {
+      if (kDebugMode) {
+        print('Error: ${result.exception.toString()}');
+      }
+      return null;
+    }
+
+    final data = result.data?['character'];
+
+    if (data == null) {
+      return null;
+    }
+
+    return Character.fromJson(data);
   }
 
   void dispose() {
