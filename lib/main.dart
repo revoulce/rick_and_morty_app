@@ -4,7 +4,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rick_and_morty_app/screens/main_screen.dart';
 
 import 'providers/character_provider.dart';
-import 'screens/home_screen.dart';
 import 'services/graphql_service.dart';
 
 void main() async {
