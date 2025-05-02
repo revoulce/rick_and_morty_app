@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:rick_and_morty_app/screens/main_screen.dart';
 
 import 'providers/character_provider.dart';
 import 'screens/home_screen.dart';
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
       ),
       darkTheme: ThemeData.dark(useMaterial3: true),
       themeMode: ThemeMode.system,
-      home: HomeScreen(),
+      home: const MainScreen(),
     );
   }
 }

@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
           provider.isLoading
               ? Center(child: CircularProgressIndicator())
               : Padding(
-                padding: EdgeInsets.symmetric(horizontal: 6.0),
+                padding: const EdgeInsets.all(6),
                 child: GridView.builder(
                   itemCount: provider.characters.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
