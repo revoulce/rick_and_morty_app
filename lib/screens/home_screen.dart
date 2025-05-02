@@ -12,16 +12,29 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _isFirsLoad = true;
+  final ScrollController _scrollController = ScrollController();
+  bool _isFirstLoad = true;
+
+  void _setupScrollListener(CharacterProvider provider) {
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 300 &&
+          provider.hasMore &&
+          !provider.isLoading) {
+        provider.loadCharacters();
+      }
+    });
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    if (_isFirsLoad) {
+    if (_isFirstLoad) {
       final provider = Provider.of<CharacterProvider>(context, listen: false);
       provider.loadCharacters();
-      _isFirsLoad = false;
+      _setupScrollListener(provider);
+      _isFirstLoad = false;
     }
   }
 
@@ -31,25 +44,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text('Список персонажей')),
-      body:
-          provider.isLoading
-              ? Center(child: CircularProgressIndicator())
-              : Padding(
-                padding: const EdgeInsets.all(6),
-                child: GridView.builder(
-                  itemCount: provider.characters.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 0.75,
-                  ),
-                  itemBuilder: (context, index) {
-                    final character = provider.characters[index];
-                    return CharacterCard(character: character);
-                  },
-                ),
-              ),
+      body: Padding(
+        padding: const EdgeInsets.all(6),
+        child: GridView.builder(
+          controller: _scrollController,
+          itemCount: provider.characters.length + (provider.hasMore ? 1 : 0),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 0.75,
+          ),
+          itemBuilder: (context, index) {
+            if (index >= provider.characters.length) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final character = provider.characters[index];
+            return CharacterCard(character: character);
+          },
+        ),
+      ),
     );
   }
 }
