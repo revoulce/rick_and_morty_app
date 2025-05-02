@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rick_and_morty_app/providers/character_provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+import 'providers/character_provider.dart';
 import 'screens/home_screen.dart';
 import 'services/graphql_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+  await Hive.openBox<String>('favorites');
+
   final graphqlService = GraphQLService();
   graphqlService.init();
 
@@ -25,7 +32,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Rick & Morty App',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blue,
+      ),
+      darkTheme: ThemeData.dark(useMaterial3: true),
+      themeMode: ThemeMode.system,
       home: HomeScreen(),
     );
   }

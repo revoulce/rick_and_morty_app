@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/character_provider.dart';
+import '../widgets/character_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -33,19 +34,21 @@ class _HomeScreenState extends State<HomeScreen> {
       body:
           provider.isLoading
               ? Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                itemCount: provider.characters.length,
-                itemBuilder: (context, index) {
-                  final character = provider.characters[index];
-
-                  return ListTile(
-                    leading: Image.network(character.image),
-                    title: Text(character.name),
-                    subtitle: Text(
-                      '${character.species} - ${character.status}',
-                    ),
-                  );
-                },
+              : Padding(
+                padding: EdgeInsets.symmetric(horizontal: 6.0),
+                child: GridView.builder(
+                  itemCount: provider.characters.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemBuilder: (context, index) {
+                    final character = provider.characters[index];
+                    return CharacterCard(character: character);
+                  },
+                ),
               ),
     );
   }
