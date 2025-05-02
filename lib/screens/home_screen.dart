@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rick_and_morty_app/providers/theme_provider.dart';
 
 import '../providers/character_provider.dart';
 import '../widgets/character_card.dart';
@@ -43,7 +44,24 @@ class _HomeScreenState extends State<HomeScreen> {
     final provider = Provider.of<CharacterProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Список персонажей')),
+      appBar: AppBar(
+        title: Text('Список персонажей'),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Provider.of<ThemeProvider>(context).isDarkMode
+                  ? Icons.dark_mode
+                  : Icons.light_mode,
+            ),
+            onPressed: () {
+              Provider.of<ThemeProvider>(
+                context,
+                listen: false,
+              ).toggleThemeMode();
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(6),
         child: GridView.builder(
