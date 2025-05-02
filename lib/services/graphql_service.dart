@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import '../models/character_model.dart';
 
 class GraphQLService {
   late ValueNotifier<GraphQLClient> client;
@@ -14,7 +15,7 @@ class GraphQLService {
     );
   }
 
-  Future<List<dynamic>> fetchCharacters() async {
+  Future<List<Character>> fetchCharacters() async {
     final String readCharacters = '''
     query {
       characters {
@@ -41,7 +42,8 @@ class GraphQLService {
       return [];
     }
 
-    return result.data?['characters']['results'] ?? [];
+    final data = result.data?['characters']['results'] as List<dynamic>;
+    return data.map((json) => Character.fromJson(json)).toList();
   }
 
   void dispose() {
