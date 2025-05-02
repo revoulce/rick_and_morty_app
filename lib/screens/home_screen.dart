@@ -3,7 +3,27 @@ import 'package:provider/provider.dart';
 
 import '../providers/character_provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool _isFirsLoad = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_isFirsLoad) {
+      final provider = Provider.of<CharacterProvider>(context, listen: false);
+      provider.loadCharacters();
+      _isFirsLoad = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<CharacterProvider>(context);
@@ -27,10 +47,6 @@ class HomeScreen extends StatelessWidget {
                   );
                 },
               ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => provider.loadCharacters(),
-        child: Icon(Icons.refresh),
-      ),
     );
   }
 }
