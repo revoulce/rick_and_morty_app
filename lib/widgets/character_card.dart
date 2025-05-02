@@ -61,7 +61,7 @@ class CharacterCard extends StatelessWidget {
                     Align(
                       alignment: Alignment.bottomRight,
                       child: Icon(
-                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        isFavorite ? Icons.star : Icons.star_border,
                         color: isFavorite ? Colors.amber : Colors.grey,
                       ),
                     ),
