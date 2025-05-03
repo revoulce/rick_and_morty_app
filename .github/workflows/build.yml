@@ -1,0 +1,17 @@
+name: Flutter
+
+on:
+  push:
+    branches:
+      - "main"
+      - "master"
+  pull_request:
+    branches:
+      - "main"
+      - "master"
+
+jobs:
+  flutter_job:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
