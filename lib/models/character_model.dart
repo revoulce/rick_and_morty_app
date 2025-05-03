@@ -1,9 +1,20 @@
+import 'package:hive/hive.dart';
+
+part 'character_model.g.dart';
+
+@HiveType(typeId: 0)
 class Character {
+  @HiveField(0)
   final String id;
+  @HiveField(1)
   final String name;
+  @HiveField(2)
   final String status;
+  @HiveField(3)
   final String species;
+  @HiveField(4)
   final String gender;
+  @HiveField(5)
   final String image;
 
   Character({
@@ -24,5 +35,16 @@ class Character {
       gender: json['gender'],
       image: json['image'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'status': status,
+      'species': species,
+      'gender': gender,
+      'image': image,
+    };
   }
 }

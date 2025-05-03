@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'models/character_model.dart';
 import 'providers/theme_provider.dart';
 import 'screens/main_screen.dart';
 import 'providers/character_provider.dart';
@@ -11,8 +12,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
+
+  Hive.registerAdapter(CharacterAdapter());
+
   await Hive.openBox<String>('favorites');
   await Hive.openBox<bool>('settings');
+  await Hive.openBox<Character>('characters_cache');
 
   final graphqlService = GraphQLService();
   graphqlService.init();
@@ -40,9 +45,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Rick & Morty App',
       theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
-      darkTheme: ThemeData.dark(
-          useMaterial3: true,
-      ),
+      darkTheme: ThemeData.dark(useMaterial3: true),
       themeMode: themeProvider.themeMode,
       home: const MainScreen(),
     );

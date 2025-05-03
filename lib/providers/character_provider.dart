@@ -9,6 +9,8 @@ class CharacterProvider with ChangeNotifier {
 
   final Box<String> _favoritesBox = Hive.box<String>('favorites');
 
+  final Box<Character> cacheBox = Hive.box<Character>('characters_cache');
+
   final List<Character> _characters = [];
 
   int _currentPage = 1;
@@ -37,6 +39,7 @@ class CharacterProvider with ChangeNotifier {
       _characters.clear();
       _currentPage = 1;
       _hasMore = true;
+      cacheBox.clear();
     }
 
     final result = await graphQLService.fetchCharactersPage(_currentPage);
@@ -45,6 +48,10 @@ class CharacterProvider with ChangeNotifier {
     _characters.addAll(newCharacters);
     _currentPage = result['nextPage'] ?? _currentPage;
     _hasMore = result['nextPage'] != null;
+
+    for (var c in newCharacters) {
+      cacheBox.put(c.id, c);
+    }
 
     _isLoading = false;
     notifyListeners();
@@ -58,7 +65,15 @@ class CharacterProvider with ChangeNotifier {
     for (final id in ids) {
       final existing = _characters.firstWhere(
         (element) => element.id == id,
-        orElse: () => Character(id: '', name: '', status: '', species: '', gender: '', image: ''),
+        orElse:
+            () => Character(
+              id: '',
+              name: '',
+              status: '',
+              species: '',
+              gender: '',
+              image: '',
+            ),
       );
 
       if (existing.id.isNotEmpty) {
@@ -72,6 +87,12 @@ class CharacterProvider with ChangeNotifier {
     }
 
     return favorites;
+  }
+
+  Future<void> loadCharactersFromCache() async {
+    final cachedCharacters = cacheBox.values.toList();
+    _characters.addAll(cachedCharacters);
+    notifyListeners();
   }
 
   void toggleFavorite(Character character) {

@@ -28,12 +28,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
 
     if (_isFirstLoad) {
       final provider = Provider.of<CharacterProvider>(context, listen: false);
-      provider.loadCharacters();
+
+      try {
+        await provider.loadCharacters();
+      } catch (e) {
+        await provider.loadCharactersFromCache();
+      }
+
       _setupScrollListener(provider);
       _isFirstLoad = false;
     }
