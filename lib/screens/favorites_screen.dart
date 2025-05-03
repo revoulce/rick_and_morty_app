@@ -60,6 +60,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             onChanged: (value) {
               if (value != null) {
                 setState(() => _sortOption = value);
+                _loadFavorites();
               }
             },
             items:
@@ -69,33 +70,39 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           ),
         ],
       ),
-      body: FutureBuilder(
-        future: _futureFavorites,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: Consumer<CharacterProvider>(
+        builder: (context, value, child) {
+          _futureFavorites = value.loadFavoriteCharacters();
 
-          final favorites = _sort(snapshot.data ?? []);
+          return FutureBuilder<List<Character>>(
+            future: _futureFavorites,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-          if (favorites.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
+              final favorites = _sort(snapshot.data ?? []);
 
-          return Padding(
-            padding: const EdgeInsets.all(6),
-            child: GridView.builder(
-              itemCount: favorites.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 0.75,
-              ),
-              itemBuilder: (context, index) {
-                return CharacterCard(character: favorites[index]);
-              },
-            ),
+              if (favorites.isEmpty) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              return Padding(
+                padding: const EdgeInsets.all(6),
+                child: GridView.builder(
+                  itemCount: favorites.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemBuilder: (context, index) {
+                    return CharacterCard(character: favorites[index]);
+                  },
+                ),
+              );
+            },
           );
         },
       ),
