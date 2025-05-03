@@ -34,11 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_isFirstLoad) {
       final provider = Provider.of<CharacterProvider>(context, listen: false);
 
-      try {
-        await provider.loadCharacters();
-      } catch (e) {
-        await provider.loadCharactersFromCache();
-      }
+      provider.loadCharactersFromCache().then((value) {
+        provider.loadCharacters();
+      });
 
       _setupScrollListener(provider);
       _isFirstLoad = false;

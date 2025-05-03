@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -29,12 +31,20 @@ class CharacterCard extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(16),
                 ),
-                child: Image.network(
-                  character.image,
-                  height: 140,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
+                child:
+                    character.image.startsWith('http')
+                        ? Image.network(
+                          character.image,
+                          height: 140,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        )
+                        : Image.file(
+                          File(character.image),
+                          height: 140,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
               ),
               Positioned(
                 top: 8,

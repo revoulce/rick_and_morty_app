@@ -26,14 +26,14 @@ class Character {
     required this.image,
   });
 
-  factory Character.fromJson(Map<String, dynamic> json) {
+  factory Character.fromJson(Map<String, dynamic> json, {String? imagePath}) {
     return Character(
       id: json['id'],
       name: json['name'],
       status: json['status'],
       species: json['species'],
       gender: json['gender'],
-      image: json['image'],
+      image: imagePath ?? json['image'],
     );
   }
 

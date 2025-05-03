@@ -45,10 +45,10 @@ class GraphQLService {
       return {'characters': [], 'nextPage': null};
     }
 
-    final data = result.data?['characters']['results'] as List<dynamic>;
+    final data = result.data?['characters'];
     return {
-      'characters': data.map((e) => Character.fromJson(e)).toList(),
-      'nextPage': result.data?['characters']['info']['next'],
+      'characters': data['results'] as List<dynamic>,
+      'nextPage': data?['info']['next'],
     };
   }
 

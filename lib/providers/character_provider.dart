@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 
 import '../models/character_model.dart';
 import '../services/graphql_service.dart';
+import '../utils/image_cache_helper.dart';
 
 class CharacterProvider with ChangeNotifier {
   final GraphQLService graphQLService;
@@ -43,7 +44,16 @@ class CharacterProvider with ChangeNotifier {
     }
 
     final result = await graphQLService.fetchCharactersPage(_currentPage);
-    final newCharacters = result['characters'] as List<Character>;
+    final newCharacters = <Character>[];
+
+    for (final json in result['characters']) {
+      final id = json['id'];
+      final imagePath = await ImageCacheHelper.downloadAndSaveImage(
+        json['image'],
+        id,
+      );
+      newCharacters.add(Character.fromJson(json, imagePath: imagePath));
+    }
 
     _characters.addAll(newCharacters);
     _currentPage = result['nextPage'] ?? _currentPage;
